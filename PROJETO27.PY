@@ -312,25 +312,30 @@ def ajustar_categorias_pdf(categorias_pdf):
         "RF Global": "RF Global",
         "Fundos Multimercado": "Multimercado",
         "Renda Variável": "Renda Variável",
-        "Renda Variável Global": "Renda Variável Global"
+        "Renda Variável Global": "Renda Variável Global",
+        "Flls":"Alternativos",
+        "Carteira Recomendada": "Renda Variável Global",
+        "Con":"Alternativos"
+
+        
     }
     return [ajustes[categoria] if categoria in ajustes else categoria for categoria in categorias_pdf]
     
 def unificar_graficos(tipo_cliente, arquivo_pdf):
     # Dados para o gráfico de alocação por categoria do Excel
-    categorias_excel = ["Pos Fixado", "Pre Fixado", "Inflação", "RF Global", "Multimercado", "Renda Variável", "Renda Variável Global"]
+    categorias_excel = ["Pos Fixado", "Pre Fixado", "Inflação", "RF Global", "Multimercado", "Renda Variável", "Renda Variável Global", "Alternativos"]
     porcentagens_excel = None
 
     if tipo_cliente == "Balanceado":
-        porcentagens_excel = [46.85, 7.5, 22.1, 0, 8.04, 9.6, 6]
+        porcentagens_excel = [46.85, 7.5, 22.1, 0, 8.04, 9.6, 6, 0]
     elif tipo_cliente == "Moderado":
-        porcentagens_excel = [62.05, 5, 20.23, 0, 4.32, 4.8, 3.6]
+        porcentagens_excel = [62.05, 5, 20.23, 0, 4.32, 4.8, 3.6, 0]
     elif tipo_cliente == "Conservador":
-        porcentagens_excel = [88.5, 2.5, 5.8, 0, 3.2, 0, 0]
+        porcentagens_excel = [88.5, 2.5, 5.8, 0, 3.2, 0, 0, 0]
     elif tipo_cliente == "Arrojado":
-        porcentagens_excel = [34.66, 8.75, 22.27, 0, 9.02, 13.3, 9.5]
+        porcentagens_excel = [34.66, 8.75, 22.27, 0, 9.02, 13.3, 9.5, 2.5]
     else:
-        porcentagens_excel = [22.48, 10, 22.52, 0, 10, 17, 13]
+        porcentagens_excel = [22.48, 10, 22.52, 0, 10, 17, 13, 5]
 
     # Obter as somas das porcentagens de alocação para cada categoria do PDF
     lista_categorias_soma = convergencia(arquivo_pdf, tipo_cliente)
@@ -410,7 +415,10 @@ def ajustar_categorias_pdf(categorias_pdf):
         "RF Global": "RF Global",
         "Fundos Multimercado": "Multimercado",
         "Renda Variável": "Renda Variável",
-        "Renda Variável Global": "Renda Variável Global"
+        "Renda Variável Global": "Renda Variável Global",
+        "Flls":"Alternativos",
+        "Carteira Recomendada": "Renda Variável Global",
+        "Alternativos":"Alternativos"
     }
     return [ajustes[categoria] if categoria in ajustes else categoria for categoria in categorias_pdf]
 
