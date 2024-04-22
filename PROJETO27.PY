@@ -1,15 +1,15 @@
 import openpyxl
-from tkinter import Tk, messagebox, filedialog                                # |
-import tkinter as tk                                                          # |
-from openpyxl import Workbook                                                 # |
-from openpyxl.styles import Font                                              # |
-from PyPDF2 import PdfReader                                                  # |
-from tkinter.filedialog import askopenfilename                                # |---- Bibliotecas e Importações
-import matplotlib.pyplot as plt                                               # |
-import os                                                                     # |
-import tempfile                                                               # |
-import win32com.client as win32                                               # |
-####################################################################################################################################################################################
+from tkinter import Tk, messagebox, filedialog
+import tkinter as tk
+from openpyxl import Workbook
+from openpyxl.styles import Font
+from PyPDF2 import PdfReader
+from tkinter.filedialog import askopenfilename
+import matplotlib.pyplot as plt
+import os
+import tempfile
+import win32com.client as win32
+
 clientes_file = "clientes.xlsx"
 
 
@@ -60,23 +60,12 @@ def excluir_cliente(nome_cliente):
         messagebox.showwarning("Aviso", f"Não foi encontrado um cliente com o nome '{nome_cliente}'.")
     else:
         messagebox.showwarning("Aviso", "Não há clientes para excluir.")
-def verificar_duplicatas(nome):
-    clientes = carregar_clientes()
-    nome = nome.lower()  # Converter o nome digitado para minúsculas
-    for cliente in clientes:
-        if cliente.lower() == nome:  # Comparar em minúsculas
-            return True
-    return False
 
 
 def adicionar_cliente():
     nome = entry_nome.get()
     tipo = tipo_var.get()
     cpf = entry_cpf.get()
-
-    if verificar_duplicatas(nome):
-        messagebox.showwarning("Aviso", f"O cliente '{nome}' já está cadastrado.")
-        return
 
     salvar_cliente(nome, cpf, tipo)
 
@@ -161,15 +150,10 @@ def abrir_janela_selecionar_arquivo():
 def nao():
     fechar_janelas_secundarias()
     abrir_janela_digitar_nome_cliente() 
-
 def sim():
     abrir_nova_janela()
     fechar_janelas_secundarias()
-
-    # Verificar se a janela principal está visível
-    if not root.winfo_viewable():
-        # Se a janela principal estiver oculta (após o envio do email), torne-a visível novamente
-        root.deiconify()
+    root.withdraw()
 
 def fechar_janelas():
     for widget in root.winfo_children():
@@ -329,7 +313,6 @@ def ajustar_categorias_pdf(categorias_pdf):
         "Fundos Multimercado": "Multimercado",
         "Renda Variável": "Renda Variável",
         "Renda Variável Global": "Renda Variável Global"
-        
     }
     return [ajustes[categoria] if categoria in ajustes else categoria for categoria in categorias_pdf]
     
@@ -347,7 +330,7 @@ def unificar_graficos(tipo_cliente, arquivo_pdf):
     elif tipo_cliente == "Arrojado":
         porcentagens_excel = [34.66, 8.75, 22.27, 0, 9.02, 13.3, 9.5]
     else:
-        porcentagens_excel = [42.9, 5, 20, 0, 12.6, 12, 7.5]
+        porcentagens_excel = [22.48, 10, 22.52, 0, 10, 17, 13]
 
     # Obter as somas das porcentagens de alocação para cada categoria do PDF
     lista_categorias_soma = convergencia(arquivo_pdf, tipo_cliente)
@@ -379,28 +362,17 @@ def unificar_graficos(tipo_cliente, arquivo_pdf):
     plt.figure(figsize=(12, 6))
     bar_width = 0.35
     index = range(len(categorias_unificadas))
-# Calcular o deslocamento necessário para mover as barras para a direita
-    deslocamento = bar_width / 2
 
-    # Criar um índice deslocado adicionando o deslocamento a cada valor no índice original
-    index_deslocado = [i + deslocamento for i in index]
+    # Barras para as porcentagens do Excel
+    plt.bar(index, porcentagens_unificadas_excel, bar_width, label='Recomendado', color='skyblue', edgecolor='black')
 
-    # Calcular um segundo deslocamento para posicionar as barras da "Diferença Absoluta" à direita das barras da "Atual"
-    segundo_deslocamento = bar_width * 2
+    # Barras para as porcentagens do PDF
+    plt.bar([i + bar_width for i in index], porcentagens_unificadas_pdf, bar_width, label='Atual', color='lightgreen', edgecolor='black')
 
-    # Plotar as barras da "Recomendado"
-    plt.bar(index_deslocado, porcentagens_unificadas_excel, bar_width, label='Recomendado', color='skyblue', edgecolor='black')
+    # Barras para as diferenças absolutas
+    plt.bar([i + bar_width / 2 for i in index], diferenca_porcentagens_abs, bar_width, label='Diferença Absoluta', color='orange', edgecolor='black')
 
-    # Plotar as barras da "Atual"
-    plt.bar([i + bar_width for i in index_deslocado], porcentagens_unificadas_pdf, bar_width, label='Atual', color='lightgreen', edgecolor='black')
-
-    # Plotar as barras da "Diferença Absoluta" ao lado das barras da "Atual"
-    plt.bar([i + segundo_deslocamento for i in index_deslocado], diferenca_porcentagens_abs, bar_width, label='Diferença Absoluta', color='orange', edgecolor='black')
-
-    # Adicionar os valores das barras da "Diferença Absoluta" acima delas
-    for i, valor_diferenca in zip(index_deslocado, diferenca_porcentagens):
-        plt.text(i + segundo_deslocamento, diferenca_porcentagens_abs[index_deslocado.index(i)] + 0.5, f'{valor_diferenca:.2f}%', ha='center', va='bottom', color='black', fontsize=8)
-    
+    # Adicionar rótulos para as barras que exibem a diferença absoluta
     for i in index:
         if diferenca_porcentagens[i] >= 0:
             plt.text(i + bar_width / 2, diferenca_porcentagens_abs[i] + 0.5, f'+{round(diferenca_porcentagens[i], 2)}%', fontsize=8, color='black', ha='center')
