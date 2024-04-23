@@ -91,6 +91,7 @@ def enviar_email(cliente, perfil, texto, path_combined_image):
  - Deve-se alterar o codigo acima para receber o email de forma correta
 
  ## 8. Recomandações
-  - Em caso de erro , fechar todas as jenals e iniciar novamente o codigo 
-
+  - Em caso de erro , fechar todas as jenals e iniciar novamente o codigo
+  - Todos os arquivos pdf devem estar no mesmo padrão, exibindo apenas o grafico redondo e nenhum outro
+  - Todos os arquivos pdf que possuem muitas informaões sua formatação deve ser em apenas uma coluna (informações dos ativos devem estar na mesma pagina)
 ---
