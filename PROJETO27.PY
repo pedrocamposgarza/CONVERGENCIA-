@@ -226,12 +226,9 @@ def executar_segundo_codigo(tipo_cliente):
                 imprimir_linhas(ws, cell.row, cell.column, palavra)
         else:
             print(f'A palavra "{palavra}" não foi encontrada no arquivo Excel.')
-        # Gerar o gráfico com base no tipo do cliente antes de chamar a função 'convergencia'
         unificar_graficos(tipo_cliente, arquivo_pdf)
         convergencia(arquivo_pdf, tipo_cliente)
-        # Fechar todas as janelas de plotagem
         plt.close()
-        # Sair do loop principal, impedindo a exibição de outras janelas gráficas
         return
     else:
         print("Nenhum arquivo selecionado. Encerrando...")
@@ -344,58 +341,44 @@ def unificar_graficos(tipo_cliente, arquivo_pdf):
     else:
         porcentagens_excel = [22.48, 10, 22.52, 0, 10, 17, 13, 5]
 
-    # Obter as somas das porcentagens de alocação para cada categoria do PDF
     lista_categorias_soma = convergencia(arquivo_pdf, tipo_cliente)
 
-    # Extrair categorias e somas das porcentagens do resultado da função convergencia
     categorias_pdf = [categoria[0] for categoria in lista_categorias_soma]
     porcentagens_soma_pdf = [porcentagem[1] for porcentagem in lista_categorias_soma]
 
-    # Ajustar categorias do PDF para corresponder às categorias do Excel
     categorias_pdf = ajustar_categorias_pdf(categorias_pdf)
 
-    # Unificar dados
     categorias_unificadas = categorias_excel + list(set(categorias_pdf) - set(categorias_excel))
     porcentagens_unificadas_excel = [porcentagens_excel[categorias_excel.index(categoria)] if categoria in categorias_excel else 0 for categoria in categorias_unificadas]
     porcentagens_unificadas_pdf = [porcentagens_soma_pdf[categorias_pdf.index(categoria)] if categoria in categorias_pdf else 0 for categoria in categorias_unificadas]
 
-    # Garantir que ambas as listas tenham o mesmo comprimento preenchendo com zero
     max_length = max(len(porcentagens_unificadas_excel), len(porcentagens_unificadas_pdf))
     porcentagens_unificadas_excel += [0] * (max_length - len(porcentagens_unificadas_excel))
     porcentagens_unificadas_pdf += [0] * (max_length - len(porcentagens_unificadas_pdf))
 
-    # Calcular a diferença entre as porcentagens do Excel e do PDF
     diferenca_porcentagens = [pdf - excel for pdf, excel in zip(porcentagens_unificadas_pdf, porcentagens_unificadas_excel)]
 
-    # Tomar os valores absolutos da diferença
     diferenca_porcentagens_abs = [abs(valor) for valor in diferenca_porcentagens]
 
-    # Plotar gráfico unificado com as diferenças absolutas
     plt.figure(figsize=(12, 6))
     bar_width = 0.35
     index = range(len(categorias_unificadas))
 
-    # Barras para as porcentagens do Excel
     plt.bar(index, porcentagens_unificadas_excel, bar_width, label='Recomendado', color='skyblue', edgecolor='black')
 
-    # Barras para as porcentagens do PDF
     plt.bar([i + bar_width for i in index], porcentagens_unificadas_pdf, bar_width, label='Atual', color='lightgreen', edgecolor='black')
 
-    # Barras para as diferenças absolutas
     plt.bar([i + bar_width / 2 for i in index], diferenca_porcentagens_abs, bar_width, label='Diferença Absoluta', color='orange', edgecolor='black')
 
-    # Adicionar rótulos para as barras que exibem a diferença absoluta
     for i in index:
         if diferenca_porcentagens[i] >= 0:
             plt.text(i + bar_width / 2, diferenca_porcentagens_abs[i] + 0.5, f'+{round(diferenca_porcentagens[i], 2)}%', fontsize=8, color='black', ha='center')
         else:
             plt.text(i + bar_width / 2, diferenca_porcentagens_abs[i] + 0.5, f'{round(diferenca_porcentagens[i], 2)}%', fontsize=8, color='black', ha='center')
 
-        # Adicionar valores acima das colunas "Atual" e "Recomendado" com apenas duas casas decimais
         plt.text(i, porcentagens_unificadas_excel[i] + 1, f"{porcentagens_unificadas_excel[i]:.2f}%", ha='center', va='bottom', color='black')
         plt.text(i + bar_width, porcentagens_unificadas_pdf[i] + 1, f"{porcentagens_unificadas_pdf[i]:.2f}%", ha='center', va='bottom', color='black')
 
-    # Personalizar o gráfico
     plt.xlabel('Categorias', fontsize=12)
     plt.ylabel('Porcentagem de alocação', fontsize=12)
     plt.title('Alocação por Categoria - Comparação entre PDF e Excel (Diferença Absoluta)', fontsize=14)
@@ -407,11 +390,7 @@ def unificar_graficos(tipo_cliente, arquivo_pdf):
     plt.savefig(temp_image_file.name)
     plt.close()
 
-    # Enviar o e-mail com o gráfico como anexo
     enviar_email(tipo_cliente, "Gráfico de Alocação por Categoria", "Segue o gráfico de alocação por categoria:", temp_image_file.name)
-
-    # Exibir o gráfico
-
 
 
 def ajustar_categorias_pdf(categorias_pdf):
