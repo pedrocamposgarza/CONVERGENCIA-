@@ -14,8 +14,11 @@ clientes_file = "clientes.xlsx"
 
 
 def carregar_clientes():
+    # Verificar se a pasta 'clientes' existe
+    if not os.path.exists("clientes"):
+        os.makedirs("clientes")
     try:
-        workbook = openpyxl.load_workbook(clientes_file)
+        workbook = openpyxl.load_workbook(os.path.join("clientes", "clientes.xlsx"))
         sheet = workbook.active
         clientes = {}
         for row in sheet.iter_rows(min_row=2, values_only=True):
@@ -26,8 +29,11 @@ def carregar_clientes():
     except FileNotFoundError:
         return {}
 
-
 def salvar_cliente(nome, cpf, tipo):
+    # Verificar se a pasta 'clientes' existe
+    if not os.path.exists("clientes"):
+        os.makedirs("clientes")
+    clientes_file = os.path.join("clientes", "clientes.xlsx")
     try:
         workbook = openpyxl.load_workbook(clientes_file)
     except FileNotFoundError:
@@ -39,11 +45,10 @@ def salvar_cliente(nome, cpf, tipo):
             cell.font = Font(bold=True)
 
     sheet = workbook.active
-    # Verificar se o nome já existe na planilha
     nomes_existentes = [cell.value for cell in sheet['A'][1:]]
     if nome in nomes_existentes:
         messagebox.showwarning("Aviso", f"O cliente '{nome}' já está cadastrado.")
-        return  # Sair da função se o nome já existir
+        return
 
     sheet.append([nome, cpf, tipo])
     workbook.save(clientes_file)
