@@ -332,7 +332,7 @@ def ajustar_categorias_pdf(categorias_pdf):
         "Renda Fixa Pós Fixado": "Pos Fixado",
         "Renda Fixa Pré Fixado": "Pre Fixado",
         "Renda Fixa Inflação": "Inflação",
-        "RF Global": "RF Global",
+        "Renda Fixa Global": "RF Global",
         "Fundos Multimercado": "Multimercado",
         "Renda Variável Global": "Renda Variável Global",
         "FIIs":"Alternativos",
@@ -424,7 +424,7 @@ def unificar_graficos(tipo_cliente, arquivo_pdf):
     plt.close()
 
     # Enviar o e-mail com o gráfico como anexo
-    enviar_email(tipo_cliente, "Gráfico de Alocação por Categoria", "Segue o gráfico de alocação por categoria:", temp_image_file.name)
+    enviar_email(nome_digitado, "Gráfico de Alocação por Categoria", "Segue o gráfico de alocação por categoria:", temp_image_file.name)
 
     # Exibir o gráfico
 
@@ -494,7 +494,7 @@ root = tk.Tk()
 root.title("Análise de Investimentos")
 root.geometry("400x200")
 
-label = tk.Label(root, text="O cliente já está cadastrado?", font=("Helvetica", 12))
+label = tk.Label(root, text="Deseja cadastrar um cliente?", font=("Helvetica", 12))
 label.pack(pady=10)
 
 frame = tk.Frame(root)
