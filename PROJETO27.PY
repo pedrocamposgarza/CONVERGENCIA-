@@ -220,11 +220,12 @@ def verificar_tipo_cliente(nome_cliente, janela):
     if nome_cliente_minusculo in clientes:
         tipo_cliente = clientes[nome_cliente_minusculo]
         print(f"O tipo do cliente '{nome_cliente}' é '{tipo_cliente}'.")
-        # Chama a função para executar o segundo código com base no nome do cliente
-        executar_segundo_codigo(nome_cliente_minusculo)
+        # Chama a função para executar o segundo código com base no tipo do cliente
+        executar_segundo_codigo(tipo_cliente)  # Corrigido para passar o tipo do cliente
     else:
         print(f"Não foi encontrado um cliente com o nome '{nome_cliente}'.")
     janela.destroy()
+
 
 
 
@@ -273,7 +274,7 @@ def convergencia(arquivo_pdf, tipo_cliente):
             categoria = elemento[:-53]
             categoria = " ".join(categoria[:-6].split()).split(" - ")[0]
             if categoria == "Fundos de Ações" or categoria == "Ações":
-                categoria = "Renda Variável BR"
+                categoria = "Renda Variável"
             elif categoria == "FIIs":
                 categoria = "Alternativos"
             porcentagem = elemento[:-53]
@@ -291,7 +292,7 @@ def convergencia(arquivo_pdf, tipo_cliente):
         elif len(elemento) <= 56 and cont > 0:
             categoria = " ".join(elemento[:-6].split()).split(" - ")[0]
             if categoria == "Fundos de Ações" or categoria == "Ações":
-                categoria = "Renda Variável BR"
+                categoria = "Renda Variável"
             elif categoria == "FIIs":
                 categoria = "Alternativos"
             categoria_individual.append(categoria)
@@ -331,23 +332,21 @@ def ajustar_categorias_pdf(categorias_pdf):
         "Renda Fixa Pós Fixado": "Pos Fixado",
         "Renda Fixa Pré Fixado": "Pre Fixado",
         "Renda Fixa Inflação": "Inflação",
-        "Renda Fixa Global": "RF Global",
+        "RF Global": "RF Global",
         "Fundos Multimercado": "Multimercado",
-        "Renda Variável": "Renda Variável",
         "Renda Variável Global": "Renda Variável Global",
-        "FIIs": "Alternativos",  # Corrigindo a categoria "Flls"
-        "5,31%Con": "Alternativos",  # Corrigindo a categoria "FIIs"
-        "Carteira Recomendada": "Renda Variável ",
-        "Alternativos": "Alternativos",
-        "Fixa Global": "RF Global"
-
+        "FIIs":"Alternativos",
+        "Alternativos":"Alternativos",
+        "Ações":"Renda Variável",
+        "Fundos de Ações":"Renda Variável"
     }
     return [ajustes.get(categoria, categoria) for categoria in categorias_pdf]
+
 
     
 def unificar_graficos(tipo_cliente, arquivo_pdf):
     # Dados para o gráfico de alocação por categoria do Excel
-    categorias_excel = ["Pos Fixado", "Pre Fixado", "Inflação", "RF Global", "Multimercado", "Renda Variável", "Renda Variável Global", "Alternativos",]
+    categorias_excel = ["Pos Fixado", "Pre Fixado", "Inflação", "RF Global", "Multimercado", "Renda Variável", "Renda Variável Global", "Alternativos", ]
     porcentagens_excel = None
 
     if tipo_cliente == "Balanceado":
@@ -440,9 +439,13 @@ def ajustar_categorias_pdf(categorias_pdf):
         "Fundos Multimercado": "Multimercado",
         "Renda Variável": "Renda Variável",
         "Renda Variável Global": "Renda Variável Global",
-        "Flls":"Alternativos",
+        "FIIs":"Alternativos",
         "Carteira Recomendada": "Renda Variável Global",
-        "Alternativos":"Alternativos"
+        "Alternativos":"Alternativos",
+        "Ações" :"Renda Variável",
+        "Fundos de Ações":"Renda Variável"
+
+
     }
     return [ajustes[categoria] if categoria in ajustes else categoria for categoria in categorias_pdf]
 
