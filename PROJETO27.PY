@@ -129,7 +129,7 @@ def abrir_janela_digitar_nome_cliente():
     frame = tk.Frame(janela_digitar_nome_cliente)
     frame.pack(pady=10)
 
-    label_nome = tk.Label(frame, text="Nomes dos Clientes (separados por vírgula):",
+    label_nome = tk.Label(frame, text="Nome do Cliente:",
                           font=("Helvetica", 12))
     label_nome.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
@@ -137,16 +137,15 @@ def abrir_janela_digitar_nome_cliente():
     entry_nome_cliente.grid(row=0, column=1, padx=10, pady=5)
 
     botao_ok = tk.Button(frame, text="Ok", command=lambda: verificar_tipo_cliente(
-        entry_nome_cliente.get().split(','), janela_digitar_nome_cliente), font=("Helvetica", 12))
+        entry_nome_cliente.get(), janela_digitar_nome_cliente), font=("Helvetica", 12))
     botao_ok.grid(row=1, column=0, columnspan=2, pady=10)
 
     botao_fechar = tk.Button(
         frame, text="Fechar", command=janela_digitar_nome_cliente.destroy, font=("Helvetica", 12))
     botao_fechar.grid(row=2, column=0, columnspan=2, pady=10)
 
-    # Retorna a lista de nomes de clientes digitados
-    return entry_nome_cliente.get().split(',')
-
+    # Retorna o nome do cliente digitado
+    return entry_nome_cliente.get()
 
 
 def fechar_janelas_secundarias():
@@ -223,22 +222,24 @@ def selecionar_pdf():
         executar_segundo_codigo(arquivo_pdf)
 
 
-def verificar_tipo_cliente(nomes_clientes, janela):
+def verificar_tipo_cliente(nome_cliente, janela):
     global nome_digitado
+    # Convertendo o nome digitado para minúsculas
+    nome_digitado = nome_cliente.lower()
     clientes = carregar_clientes()
+    # Convertendo os nomes existentes para minúsculas
+    nome_cliente_minusculo = nome_cliente.lower()
 
-    for nome_cliente in nomes_clientes:
-        nome_cliente_minusculo = nome_cliente.strip().lower()
-
-        if nome_cliente_minusculo in clientes:
-            tipo_cliente = clientes[nome_cliente_minusculo]
-            print(f"O tipo do cliente '{nome_cliente}' é '{tipo_cliente}'.")
-            # Chama a função para executar o segundo código com base no tipo do cliente
-            executar_segundo_codigo(tipo_cliente)
-        else:
-            print(f"Não foi encontrado um cliente com o nome '{nome_cliente}'.")
-    
+    if nome_cliente_minusculo in clientes:
+        tipo_cliente = clientes[nome_cliente_minusculo]
+        print(f"O tipo do cliente '{nome_cliente}' é '{tipo_cliente}'.")
+        # Chama a função para executar o segundo código com base no tipo do cliente
+        # Corrigido para passar o tipo do cliente
+        executar_segundo_codigo(tipo_cliente)
+    else:
+        print(f"Não foi encontrado um cliente com o nome '{nome_cliente}'.")
     janela.destroy()
+
 
 def executar_segundo_codigo(tipo_cliente):
     arquivo_excel, arquivo_pdf = selecionar_arquivos()
